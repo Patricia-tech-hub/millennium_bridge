@@ -150,7 +150,7 @@ class SimConfig:
     Nmax: int = 250
     dT: float = 120.0          # seconds between crowd increments
     dt_eval: float = 0.02     # time spacing for t_eval output (smooth plots)
-    extra_intervals_after_max: int = 20  # run extra dT intervals after reaching Nmax
+    extra_intervals_after_max: int = 200  # run extra dT intervals after reaching Nmax
     seed: int = 123
     X0: float = 0.0
     V0: float = 0.0
@@ -275,10 +275,15 @@ def plot_results(t, A, R, N, Nc, tc, title="Millennium Bridge crowd-ramp experim
     axes[0].plot(t, N)
     axes[0].set_ylabel("N(t)")
     axes[0].set_title(title)
+    axes[0].set_ylim(45, 265)
+    axes[0].set_yticks([50, 75, 100, 125, 150, 175, 200, 225, 250])
 
     # A(t)
     axes[1].plot(t, A)
     axes[1].set_ylabel("A(t) [m]")
+    # Fix amplitude scale for easier comparisons
+    axes[1].set_ylim(0.0, 0.1)
+    axes[1].set_yticks(np.arange(0.0, 0.101, 0.01))
 
     # R(t)
     axes[2].plot(t, R)
@@ -295,8 +300,17 @@ def plot_results(t, A, R, N, Nc, tc, title="Millennium Bridge crowd-ramp experim
 
     # Annotate Nc
     axes[0].axhline(Nc, linestyle=":", linewidth=1)
-    axes[0].text(t[0], Nc, f" Nc ≈ {Nc:.1f}", va="bottom")
+    # Move Nc label slightly right and slightly above the dotted line
+    xmin, xmax = axes[0].get_xlim()
+    x_offset = xmin + 0.05 * (xmax - xmin)   # 3% from left
 
+    axes[0].text(
+    x_offset,
+    Nc + 0.01 * (axes[0].get_ylim()[1] - axes[0].get_ylim()[0]),  # small upward offset
+    f"Nc ≈ {Nc:.1f}",
+    va="bottom",
+    ha="left",
+    bbox=dict(facecolor="white", edgecolor="none", alpha=0.8, pad=2))
     fig.tight_layout()
     plt.show()
 
@@ -339,7 +353,7 @@ def main():
     p.add_argument("--dT", type=float, default=5.0)
     p.add_argument("--dt", type=float, default=0.02, help="t_eval spacing for smooth plots")
     p.add_argument("--seed", type=int, default=123)
-    p.add_argument("--extra", type=int, default=3, help="extra ΔT intervals after reaching Nmax")
+    p.add_argument("--extra", type=int, default=200, help="extra ΔT intervals after reaching Nmax")
     args = p.parse_args()
 
     params = Params()
