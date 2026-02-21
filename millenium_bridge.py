@@ -148,14 +148,13 @@ class SimConfig:
     N0: int = 50
     dN: int = 10
     Nmax: int = 250
-    dT: float = 120.0          # seconds between crowd increments
+    dT: float = 5.0          # seconds between crowd increments
     dt_eval: float = 0.02     # time spacing for t_eval output (smooth plots)
     extra_intervals_after_max: int = 200  # run extra dT intervals after reaching Nmax
     seed: int = 123
     X0: float = 0.0
     V0: float = 0.0
     X0_jitter: float = 1e-6   # small initial bridge displacement to break symmetry (can be 0)
-
 
 def run_ramp_experiment(params: Params, cfg: SimConfig):
     rng = np.random.default_rng(cfg.seed)
